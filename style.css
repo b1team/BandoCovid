@@ -1,0 +1,7 @@
+.map {
+	height: 400px;
+	width: 100%;
+    border-style: solid;
+    border-color: black;
+    background-color: rgb(223, 223, 230);
+}
