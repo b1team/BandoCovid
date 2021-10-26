@@ -192,8 +192,18 @@ function init() {
 		}
 	});
 
+	$("#chkvietnam").change(function () {
+		if ($("#chkvietnam").is(":checked")) {
+			vietnam_geo.setVisible(true);
+		} else {
+			vietnam_geo.setVisible(false);
+		}
+	});
+
 	// Click hiện thông tin layer
-	// format application/json -> respone dạng json
+	// INFO_FOMAT application/json -> respone dạng json
+	// respone.text() -> respone
+	// document ... -> console
 	map.on("singleclick", function (evt) {
 		var view = map.getView();
 		var viewResolution = view.getResolution();
@@ -206,10 +216,10 @@ function init() {
 		if (url) {
 			fetch(url)
 				.then(function (response) {
-					return response.text(); // json bỏ text
+					return response.text();
 				})
 				.then((data) => {
-					document.getElementById("info").innerHTML = data; // json bỏ inner -> console.log
+					document.getElementById("info").innerHTML = data;
 				})
 				.catch(function (err) {
 					console.log("Error: ", err);
