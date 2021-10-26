@@ -4,9 +4,10 @@ from flask import Flask, jsonify
 import requests
 from retry import retry
 
-from config import ApiConfig
+from api.config import ApiConfig
 
 app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
 
 @retry(tries=3, delay=2)
 def get_districts(url: str, city_id: str):
@@ -55,5 +56,4 @@ def get_districts_handler():
 
 
 if __name__ == "__main__":
-	app.config['JSON_AS_ASCII'] = False
 	app.run(debug=True)
