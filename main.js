@@ -15,21 +15,9 @@ function init() {
 	var quanhuyen = new ol.layer.Image({
 		extent: extent4326,
 		source: new ol.source.ImageWMS({
-			url: "http://localhost:8080/geoserver/test/wms",
+			url: "http://103.148.57.200:8080/geoserver/covid/wms",
 			params: {
-				LAYERS: "test:QuanHuyenHN",
-				VERSION: "1.1.0",
-			},
-			serverType: "geoserver",
-		}),
-	});
-
-	var natural = new ol.layer.Image({
-		extent: extent4326,
-		source: new ol.source.ImageWMS({
-			url: "http://localhost:8080/geoserver/test/wms",
-			params: {
-				LAYERS: "test:natural",
+				LAYERS: "covid:HanhChinhHN",
 				VERSION: "1.1.0",
 			},
 			serverType: "geoserver",
@@ -39,19 +27,39 @@ function init() {
 	var building = new ol.layer.Image({
 		extent: extent4326,
 		source: new ol.source.ImageWMS({
-			url: "http://localhost:8080/geoserver/test/wms",
+			url: "http://103.148.57.200:8080/geoserver/covid/wms",
 			params: {
-				LAYERS: "test:buildings",
+				LAYERS: "covid:buildings",
 				VERSION: "1.1.0",
 			},
 			serverType: "geoserver",
 		}),
 	});
 
-	var geojson = new ol.layer.Vector({
+	var hanoi_geo = new ol.layer.Vector({
 		title: "added Layer",
 		source: new ol.source.Vector({
-			url: "HaNoiG.geojson",
+			url: "./geojson/HaNoiG.geojson",
+			format: new ol.format.GeoJSON(),
+		}),
+		style: function (feature) {
+			style.getText().setText(feature.get("ADM2_VI"));
+			return style;
+		},
+	});
+
+	var vietnam_geo = new ol.layer.Vector({
+		title: "added Layer",
+		source: new ol.source.Vector({
+			url: "./geojson/vietnam.geojson",
+			format: new ol.format.GeoJSON(),
+		}),
+	});
+
+	var building_geo = new ol.layer.Vector({
+		title: "added Layer",
+		source: new ol.source.Vector({
+			url: "./geojson/buildings.geojson",
 			format: new ol.format.GeoJSON(),
 		}),
 	});
@@ -71,7 +79,7 @@ function init() {
 		controls: ol.control
 			.defaults()
 			.extend([mousePositionControl, scaleLineControl, zoomslider]),
-		layers: [quanhuyen,geojson,natural, building],
+		layers: [vietnam_geo, quanhuyen, hanoi_geo, building_geo],
 		view: new ol.View({
 			projection: projection4326,
 			center: [105.8138, 21.0],
@@ -80,19 +88,99 @@ function init() {
 		}),
 	});
 
+	// Hover chuột
+	const style = new ol.style.Style({
+		fill: new ol.style.Fill({
+			color: "rgba(255, 255, 255, 0.6)",
+		}),
+		stroke: new ol.style.Stroke({
+			color: "#000",
+			width: 1,
+		}),
+		text: new ol.style.Text({
+			font: "12px Calibri,sans-serif",
+			fill: new ol.style.Fill({
+				color: "#000",
+			}),
+			stroke: new ol.style.Stroke({
+				color: "#fff",
+				width: 3,
+			}),
+		}),
+	});
+
+	const highlightStyle = new ol.style.Style({
+		stroke: new ol.style.Stroke({
+			color: "#f00",
+			width: 1,
+		}),
+		fill: new ol.style.Fill({
+			color: "rgba(255,0,0,0.1)",
+		}),
+		text: new ol.style.Text({
+			font: "12px Calibri,sans-serif",
+			fill: new ol.style.Fill({
+				color: "#000",
+			}),
+			stroke: new ol.style.Stroke({
+				color: "#fff",
+				width: 3,
+			}),
+		}),
+	});
+
+	let highlight;
+
+	const displayFeatureInfo = function (pixel) {
+		const feature = map.forEachFeatureAtPixel(pixel, function (feature) {
+			return feature;
+		});
+
+		const info = document.getElementById("info2");
+		if (feature) {
+			info.innerHTML = "Địa điểm đang trỏ: " + feature.get("ADM2_VI");
+		} else {
+			info.innerHTML = "&nbsp;";
+		}
+
+		if (feature !== highlight) {
+			if (highlight) {
+				featureOverlay.getSource().removeFeature(highlight);
+			}
+			if (feature) {
+				featureOverlay.getSource().addFeature(feature);
+			}
+			highlight = feature;
+		}
+	};
+
+	const featureOverlay = new ol.layer.Vector({
+		source: new ol.source.Vector(),
+		map: map,
+		style: function (feature) {
+			highlightStyle.getText().setText(feature.get("ADM2_VI"));
+			return highlightStyle;
+		},
+	});
+
+	map.on("pointermove", function (evt) {
+		if (evt.dragging) {
+			return;
+		}
+		const pixel = map.getEventPixel(evt.originalEvent);
+		displayFeatureInfo(pixel);
+	});
+
+	map.on("click", function (evt) {
+		displayFeatureInfo(evt.pixel);
+	});
+
+	// Bật/tắt layer
 	$("#chkNatural").change(function () {
 		if ($("#chkNatural").is(":checked")) {
 			natural.setVisible(true);
 		} else {
 			natural.setVisible(false);
-		}
-	});
-
-	$("#chkBuilding").change(function () {
-		if ($("#chkBuilding").is(":checked")) {
-			building.setVisible(true);
-		} else {
-			building.setVisible(false);
 		}
 	});
 
@@ -104,10 +192,8 @@ function init() {
 		}
 	});
 
-	// map.on("click", function (e) {
-	// 	console.log(e.coordinate);
-	// });
-
+	// Click hiện thông tin layer
+	// format application/json -> respone dạng json
 	map.on("singleclick", function (evt) {
 		var view = map.getView();
 		var viewResolution = view.getResolution();
@@ -120,37 +206,13 @@ function init() {
 		if (url) {
 			fetch(url)
 				.then(function (response) {
-					return response.text();
+					return response.text(); // json bỏ text
 				})
 				.then((data) => {
-					document.getElementById("info").innerHTML = decode_utf8(data);
+					document.getElementById("info").innerHTML = data; // json bỏ inner -> console.log
 				})
-				.catch(function () {
-					console.log("Error");
-				});
-		}
-	});
-
-	map.on("singleclick", function (evt) {
-		var view = map.getView();
-		var viewResolution = view.getResolution();
-		var url = natural
-			.getSource()
-			.getFeatureInfoUrl(evt["coordinate"], viewResolution, "EPSG:4326", {
-				INFO_FORMAT: "text/html",
-			});
-
-		if (url) {
-			fetch(url)
-				.then(function (response) {
-					return response.text();
-				})
-				.then((data) => {
-					document.getElementById("info1").innerHTML =
-						decode_utf8(data);
-				})
-				.catch(function () {
-					console.log("Error");
+				.catch(function (err) {
+					console.log("Error: ", err);
 				});
 		}
 	});
@@ -170,58 +232,15 @@ function init() {
 					return response.text();
 				})
 				.then((data) => {
-					document.getElementById("info2").innerHTML =
+					document.getElementById("info1").innerHTML =
 						decode_utf8(data);
 				})
-				.catch(function () {
-					console.log("Error");
+				.catch(function (err) {
+					console.log("Error: ", err);
 				});
 		}
 	});
-
-	let select = null; // ref to currently selected interaction
-
-	// select interaction working on "singleclick"
-	const selectSingleClick = new ol.interaction.Select();
-
-	// select interaction working on "pointermove"
-	const selectPointerMove = new ol.interaction.Select({
-		condition: ol.events.condition.pointerMove,
-	});
-
-	const selectElement = document.getElementById("type");
-
-	const changeInteraction = function () {
-		if (select !== null) {
-			map.removeInteraction(select);
-		}
-		const value = selectElement.value;
-		if (value == "singleclick") {
-			select = selectSingleClick;
-		}else if (value == "pointermove") {
-			select = selectPointerMove;
-		} else {
-			select = null;
-		}
-		if (select !== null) {
-			map.addInteraction(select);
-			select.on("select", function (e) {
-				document.getElementById("status").innerHTML =
-					"&nbsp;" +
-					e.target.getFeatures().getLength() +
-					" selected features (last operation selected " +
-					e.selected.length +
-					" and deselected " +
-					e.deselected.length +
-					" features)";
-			});
-		}
-	};
-
-	selectElement.onchange = changeInteraction;
-
 }
-
 
 function decode_utf8(s) {
 	return decodeURIComponent(escape(s));

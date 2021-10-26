@@ -13,11 +13,6 @@
 
 <body>
     <div id="map" class="map"></div>
-
-    <div id="checkmap" class="checkmap">
-        <input type="checkbox" id="chkNatural" checked style="float:left" /><label for="chkNatural"
-            style="float:left; margin-right: 20px">Natural</label>
-    </div>
     <div id="checkmap" class="checkmap">
         <input type="checkbox" id="chkQuanHuyen" checked style="float:left" /><label for="chkNatural"
             style="float:left; margin-right: 20px">QuanHuyen</label>
@@ -29,17 +24,7 @@
     <br>
     <div id="info">&nbsp;</div>
     <div id="info1">&nbsp;</div>
-    <div id="info2">&nbsp;</div>
-
-    <form class="form-inline">
-        <label for="type">Action type &nbsp;</label>
-        <select id="type" class="form-control">
-            <option value="singleclick">Single-click</option>
-            <option value="pointermove">Hover</option>
-            <option value="none">None</option>
-        </select>
-        <span id="status">&nbsp;0 selected features</span>
-    </form>
+    <div id="info2"></div>
 
     <script src="./main.js"></script>
     <script src="./libs/v6.9.0-dist/ol.js"></script>
