@@ -56,14 +56,6 @@ function init() {
 		}),
 	});
 
-	var building_geo = new ol.layer.Vector({
-		title: "added Layer",
-		source: new ol.source.Vector({
-			url: "./geojson/buildings.geojson",
-			format: new ol.format.GeoJSON(),
-		}),
-	});
-
 	var mousePositionControl = new ol.control.MousePosition({
 		coordinateFormat: ol.coordinate.createStringXY(4),
 		undefinedHTML: "&nbsp;",
@@ -79,7 +71,7 @@ function init() {
 		controls: ol.control
 			.defaults()
 			.extend([mousePositionControl, scaleLineControl, zoomslider]),
-		layers: [vietnam_geo, quanhuyen, hanoi_geo, building_geo],
+		layers: [vietnam_geo, quanhuyen, building, hanoi_geo],
 		view: new ol.View({
 			projection: projection4326,
 			center: [105.8138, 21.0],
@@ -91,7 +83,7 @@ function init() {
 	// Hover chuột
 	const style = new ol.style.Style({
 		fill: new ol.style.Fill({
-			color: "rgba(255, 255, 255, 0.6)",
+			color: "rgba(255, 255, 255, 0.8)",
 		}),
 		stroke: new ol.style.Stroke({
 			color: "#000",
@@ -176,19 +168,21 @@ function init() {
 	});
 
 	// Bật/tắt layer
-	$("#chkNatural").change(function () {
-		if ($("#chkNatural").is(":checked")) {
-			natural.setVisible(true);
+	$("#chkBuilding").change(function () {
+		if ($("#chkBuilding").is(":checked")) {
+			building.setVisible(true);
 		} else {
-			natural.setVisible(false);
+			building.setVisible(false);
 		}
 	});
 
 	$("#chkQuanHuyen").change(function () {
 		if ($("#chkQuanHuyen").is(":checked")) {
 			quanhuyen.setVisible(true);
+			hanoi_geo.setVisible(true);
 		} else {
 			quanhuyen.setVisible(false);
+			hanoi_geo.setVisible(false);
 		}
 	});
 
