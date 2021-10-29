@@ -15,18 +15,17 @@ def get_districts(url: str, city_id: str):
 	response = requests.request("POST", url, data=payload)
 
 	data = response.json()
-	districts = [
-		{
+	summary = {
 			"summary": data.get("summary")
-		}
-	]
+	}
+	districts = []
 	for _, v in data["regionLocations"].items():
 		districts.append({
 			"id": v['id'],
 			"title": v['title'],
 			"region_type": v['regionType'],
 		})
-	return districts
+	return dict(summary, districts=districts)
 
 
 def get_district_by_id(district_id: str, keys: List[str], url: str):
