@@ -1,4 +1,8 @@
-window.onload = init;
+window.onload = function () {
+	get_districts();
+};
+
+let covid_data = [];
 
 function init() {
 	var extent4326 = [
@@ -163,6 +167,120 @@ function init() {
 		displayFeatureInfo(pixel);
 	});
 
+	// Fill mau theo so ca nhiem
+	var extent = map.getView().calculateExtent(map.getSize());
+
+	const blue_style = new ol.style.Style({
+		stroke: new ol.style.Stroke({
+			color: "#fff",
+			width: 1,
+		}),
+		fill: new ol.style.Fill({
+			color: "rgba(0,0,244,0.4)",
+		}),
+		text: new ol.style.Text({
+			font: "12px Calibri,sans-serif",
+			fill: new ol.style.Fill({
+				color: "#fff",
+			}),
+			stroke: new ol.style.Stroke({
+				color: "#000",
+				width: 3,
+			}),
+		}),
+	});
+
+	const yellow_style = new ol.style.Style({
+		stroke: new ol.style.Stroke({
+			color: "#fff",
+			width: 1,
+		}),
+		fill: new ol.style.Fill({
+			color: "rgba(255,165,0,0.6)",
+		}),
+		text: new ol.style.Text({
+			font: "12px Calibri,sans-serif",
+			fill: new ol.style.Fill({
+				color: "#fff",
+			}),
+			stroke: new ol.style.Stroke({
+				color: "#000",
+				width: 3,
+			}),
+		}),
+	});
+
+	const red_style = new ol.style.Style({
+		stroke: new ol.style.Stroke({
+			color: "#fff",
+			width: 1,
+		}),
+		fill: new ol.style.Fill({
+			color: "rgba(255,0,0,0.5)",
+		}),
+		text: new ol.style.Text({
+			font: "12px Calibri,sans-serif",
+			fill: new ol.style.Fill({
+				color: "#fff",
+			}),
+			stroke: new ol.style.Stroke({
+				color: "#000",
+				width: 3,
+			}),
+		}),
+	});
+
+	let stop = 0;
+	map.on("rendercomplete", function () {
+		var features = hanoi_geo.getSource().getFeatures();
+		if (stop === 1) return;
+
+		if (covid_data.length === 30) {
+			console.log(covid_data);
+			for (var i in features) {
+				var feature = features[i];
+				if (
+					ol.extent.containsExtent(
+						extent,
+						feature.getGeometry().getExtent()
+					)
+				) {
+					for (const data of covid_data) {
+						if (feature.get("ADM2_VI") === data.place) {
+							if (data.totalPositive < 50) {
+								feature.setStyle(blue_style);
+								var clone = feature.getStyle().clone();
+								feature.setStyle(clone);
+								feature
+									.getStyle()
+									.getText()
+									.setText(feature.get("ADM2_VI"));
+							}
+							if (data.totalPositive >=50 && data.totalPositive <= 100) {
+								feature.setStyle(yellow_style);
+								var clone = feature.getStyle().clone();
+								feature.setStyle(clone);
+								feature
+									.getStyle()
+									.getText()
+									.setText(feature.get("ADM2_VI"));
+							} if (data.totalPositive > 100) {
+								feature.setStyle(red_style);
+								var clone = feature.getStyle().clone();
+								feature.setStyle(clone);
+								feature
+									.getStyle()
+									.getText()
+									.setText(feature.get("ADM2_VI"));
+							}
+						}
+					}
+				}
+			}
+		stop = 1;
+		}
+	});
+
 	map.on("click", function (evt) {
 		displayFeatureInfo(evt.pixel);
 	});
@@ -204,16 +322,22 @@ function init() {
 		var url = quanhuyen
 			.getSource()
 			.getFeatureInfoUrl(evt["coordinate"], viewResolution, "EPSG:4326", {
-				INFO_FORMAT: "text/html",
+				INFO_FORMAT: "application/json",
 			});
 
 		if (url) {
 			fetch(url)
 				.then(function (response) {
-					return response.text();
+					return response.json();
 				})
 				.then((data) => {
-					document.getElementById("info").innerHTML = data;
+					var place = data.features[0].properties.adm2_vi;
+					for (const data of covid_data){
+						if (place === data.place) {
+							console.log(data);
+							break;
+						}
+					}
 				})
 				.catch(function (err) {
 					console.log("Error: ", err);
@@ -248,4 +372,42 @@ function init() {
 
 function decode_utf8(s) {
 	return decodeURIComponent(escape(s));
+}
+
+// lay thong tin id, ten
+function get_districts() {
+	fetch(`http://localhost:8000/districts`)
+		.then(function (response) {
+			return response.json();
+		})
+		.then((data) => {
+			get_covid_all_location(data.districts);
+			init();
+		})
+		.catch(function (err) {
+			console.log("Error: ", err);
+		});
+}
+
+//lay thong tin covid tat ca cac quan
+function get_covid_all_location(districts) {
+	for (const district of districts) {
+		fetch(`http://localhost:8000/districts/${district.id}`)
+			.then(function (response) {
+				return response.json();
+			})
+			.then((data) => {
+				//muon lay thong tin gi sua summany, wards
+				result = {
+					place: district.title,
+					totalPositive: data.summary.totalPositive,
+					summary: data.summary,
+					wards: data.wards,
+				};
+				covid_data.push(result);
+			})
+			.catch(function (err) {
+				console.log("Error: ", err);
+			});
+	}
 }

@@ -4,9 +4,14 @@ from flask import Flask, jsonify
 import requests
 from retry import retry
 
+from flask_cors import CORS, cross_origin
+
+
 from api.config import ApiConfig
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['JSON_AS_ASCII'] = False
 
 @retry(tries=3, delay=2)
@@ -47,12 +52,14 @@ def get_district_by_id(district_id: str, keys: List[str], url: str):
 
 
 @app.route("/districts/<district_id>")
+@cross_origin()
 def get_district(district_id):
 	district = get_district_by_id(
 		district_id, ApiConfig.district_fields, ApiConfig.api_url)
 	return jsonify(district)
 
 @app.route("/districts")
+@cross_origin()
 def get_districts_handler():
 	districts = get_districts(url=ApiConfig.api_url, city_id=ApiConfig.city_id)
 	return jsonify(districts=districts)
