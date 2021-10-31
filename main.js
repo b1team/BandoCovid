@@ -264,7 +264,7 @@ function init() {
 									.getStyle()
 									.getText()
 									.setText(feature.get("ADM2_VI"));
-							} else {
+							} if (data.totalPositive > 100) {
 								feature.setStyle(red_style);
 								var clone = feature.getStyle().clone();
 								feature.setStyle(clone);
