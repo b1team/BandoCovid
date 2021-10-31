@@ -344,30 +344,6 @@ function init() {
 				});
 		}
 	});
-
-	map.on("singleclick", function (evt) {
-		var view = map.getView();
-		var viewResolution = view.getResolution();
-		var url = building
-			.getSource()
-			.getFeatureInfoUrl(evt["coordinate"], viewResolution, "EPSG:4326", {
-				INFO_FORMAT: "text/html",
-			});
-
-		if (url) {
-			fetch(url)
-				.then(function (response) {
-					return response.text();
-				})
-				.then((data) => {
-					document.getElementById("info1").innerHTML =
-						decode_utf8(data);
-				})
-				.catch(function (err) {
-					console.log("Error: ", err);
-				});
-		}
-	});
 }
 
 function decode_utf8(s) {
@@ -376,7 +352,7 @@ function decode_utf8(s) {
 
 // lay thong tin id, ten
 function get_districts() {
-	fetch(`http://localhost:8000/districts`)
+	fetch('http://localhost:8000/districts')
 		.then(function (response) {
 			return response.json();
 		})
@@ -391,7 +367,7 @@ function get_districts() {
 
 //lay thong tin covid tat ca cac quan
 function get_covid_all_location(districts) {
-	for (const district of districts) {
+	for (let district of districts.districts) {
 		fetch(`http://localhost:8000/districts/${district.id}`)
 			.then(function (response) {
 				return response.json();
