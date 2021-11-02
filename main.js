@@ -313,9 +313,6 @@ function init() {
 	});
 
 	// Click hiện thông tin layer
-	// INFO_FOMAT application/json -> respone dạng json
-	// respone.text() -> respone
-	// document ... -> console
 	const container = document.getElementById('popup');
 	const content = document.getElementById('popup-content');
 	const closer = document.getElementById('popup-closer');
@@ -336,6 +333,7 @@ function init() {
 					return response.json();
 				})
 				.then((data) => {
+					if (data.features.length === 0) return;
 					var place = data.features[0].properties.adm2_vi;
 					for (const data of covid_data) {
 						if (place === data.place) {
@@ -426,7 +424,7 @@ function decode_utf8(s) {
 
 // lay thong tin id, ten
 function get_districts() {
-	fetch('http://localhost:5000/districts')
+	fetch('http://localhost:8000/districts')
 		.then(function (response) {
 			return response.json();
 		})
@@ -442,7 +440,7 @@ function get_districts() {
 //lay thong tin covid tat ca cac quan
 function get_covid_all_location(districts) {
 	for (let district of districts.districts) {
-		fetch(`http://localhost:5000/districts/${district.id}`)
+		fetch(`http://localhost:8000/districts/${district.id}`)
 			.then(function (response) {
 				return response.json();
 			})
