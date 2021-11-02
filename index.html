@@ -27,16 +27,32 @@
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <div id="side-menu-wrapped">
             <div id="menu">
-                <!-- <div class="container">
-                    <div class="row" id="content">
-                        <div class="col-lg-2">Tên quận</div>
-                        <div class="col-lg-2">Ca dương tính</div>
-                        <div class="col-lg-2">F1</div>
-                        <div class="col-lg-2">F2</div>
-                        <div class="col-lg-2">Ca hồi phục</div>
-                        <div class="col-lg-2">Tử vong</div>
-                    </div>
-                </div> -->
+                <table class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Quận</th>
+                            <th scope="col">Ca dương tính</th>
+                            <th scope="col">F1</th>
+                            <th scope="col">F2</th>
+                            <th scope="col">Cách ly tại nhà</th>
+                            <th scope="col">Cách ly tập trung</th>
+                            <th scope="col">Số ca trong ngày</th>
+                            <th scope="col">Hồi phục</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="col">Hà Nội</th>
+                            <th scope="col" id="positiveCaseHN"></th>
+                            <th scope="col" id="f1CaseHN"></th>
+                            <th scope="col" id="f2CaseHN"></th>
+                            <th scope="col" id="isolatedCenter"></th>
+                            <th scope="col" id="isolatedHome"></th>
+                            <th scope="col" id="positivePerDay"></th>
+                            <th scope="col" id="curedCaseHN"></th>
+                        </tr>
+                    </tbody>
+                </table>
                 <table class="table">
                     <thead class="thead-dark">
                         <tr>
