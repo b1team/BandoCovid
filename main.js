@@ -3,6 +3,7 @@ window.onload = function () {
 };
 
 let covid_data = [];
+let total_data = {};
 
 function init() {
 	var extent4326 = [
@@ -359,7 +360,6 @@ function init() {
 								+ '</ol></div>');
 							var wards = data.wards;
 							var ward;
-							console.log(wards);
 
 							var ward_form = document.getElementById('content');
 
@@ -429,6 +429,8 @@ function get_districts() {
 			return response.json();
 		})
 		.then((data) => {
+			total_data = data.districts.summary
+			console.log(total_data)
 			get_covid_all_location(data.districts);
 			init();
 		})
