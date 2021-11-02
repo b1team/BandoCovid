@@ -256,7 +256,7 @@ function init() {
 									.getText()
 									.setText(feature.get("ADM2_VI"));
 							}
-							if (data.totalPositive >=50 && data.totalPositive <= 100) {
+							if (data.totalPositive >= 50 && data.totalPositive <= 100) {
 								feature.setStyle(yellow_style);
 								var clone = feature.getStyle().clone();
 								feature.setStyle(clone);
@@ -277,7 +277,7 @@ function init() {
 					}
 				}
 			}
-		stop = 1;
+			stop = 1;
 		}
 	});
 
@@ -316,6 +316,11 @@ function init() {
 	// INFO_FOMAT application/json -> respone dạng json
 	// respone.text() -> respone
 	// document ... -> console
+	const container = document.getElementById('popup');
+	const content = document.getElementById('popup-content');
+	const closer = document.getElementById('popup-closer');
+	var popup = new Popup();
+	map.addOverlay(popup);
 	map.on("singleclick", function (evt) {
 		var view = map.getView();
 		var viewResolution = view.getResolution();
@@ -332,9 +337,78 @@ function init() {
 				})
 				.then((data) => {
 					var place = data.features[0].properties.adm2_vi;
-					for (const data of covid_data){
+					for (const data of covid_data) {
 						if (place === data.place) {
 							console.log(data);
+							var totalPositive = data.totalPositive;
+							var district = data.place;
+							var f1 = data.summary.covidF1;
+							var f2 = data.summary.covidF2;
+							var totalPositiveDay = data.summary.totalPositiveDay;
+							var totalCenter = data.summary.totalCenter;
+							var totalDie = data.summary.totalDie;
+							var totalCured = data.summary.totalCured;
+
+							popup.show(evt.coordinate,
+								'<div><ol><li>Quận:' + district + '</li>'
+								+ '<li>F1: ' + f1 + '</li>'
+								+ '<li>F2: ' + f2 + '</li>'
+								+ '<li>Số ca nhiễm: ' + totalPositive + '</li>'
+								+ '<li>Số ca nhiễm trong ngày: ' + totalPositiveDay + '</li>'
+								+ '<li>Cách ly tập trung:' + totalCenter + '</li>'
+								+ '<li>Số ca hồi phục:' + totalCured + '</li>'
+								+ '<li>Số ca tử vong:' + totalDie + '</li>'
+								+ '</ol></div>');
+							var wards = data.wards;
+							var ward;
+							console.log(wards);
+
+							var ward_form = document.getElementById('content');
+
+							removeElements(document.querySelectorAll('.ward-form'));
+							removeElements(document.querySelectorAll('td'));
+
+							for (ward of wards) {
+								var p = document.createElement("td");
+								var p_totalCured = document.createElement("td");
+								var p_totalDie = document.createElement("td");
+								var p_f1 = document.createElement("td");
+								var p_f2 = document.createElement("td");
+								var p_ward = document.createElement("td");
+
+								if (ward.totalPositive === null) {
+									ward.totalPositive = 0;
+								}
+								if (ward.covidF1 === null) {
+									ward.covidF1 = 0;
+								}
+								if (ward.covidF2 === null) {
+									ward.covidF2 = 0;
+								}
+								if (ward.totalCured === null) {
+									ward.totalCured = 0;
+								}
+								if (ward.totalDie === null) {
+									ward.totalDie = 0;
+								}
+
+								p_ward.innerHTML = ward.wardTitle;
+								p.innerHTML = ward.totalPositive;
+								p_f1.innerHTML = ward.covidF1;
+								p_f2.innerHTML = ward.covidF2;
+								p_totalCured.innerHTML = ward.totalCured;
+								p_totalDie.innerHTML = ward.totalDie;
+
+								var tr = document.createElement("tr");
+
+								ward_form.appendChild(tr);
+								tr.appendChild(p_ward);
+								tr.appendChild(p);
+								tr.appendChild(p_f1);
+								tr.appendChild(p_f2);
+								tr.appendChild(p_totalCured);
+								tr.appendChild(p_totalDie);
+							}
 							break;
 						}
 					}
@@ -352,7 +426,7 @@ function decode_utf8(s) {
 
 // lay thong tin id, ten
 function get_districts() {
-	fetch('http://localhost:8000/districts')
+	fetch('http://localhost:5000/districts')
 		.then(function (response) {
 			return response.json();
 		})
@@ -368,7 +442,7 @@ function get_districts() {
 //lay thong tin covid tat ca cac quan
 function get_covid_all_location(districts) {
 	for (let district of districts.districts) {
-		fetch(`http://localhost:8000/districts/${district.id}`)
+		fetch(`http://localhost:5000/districts/${district.id}`)
 			.then(function (response) {
 				return response.json();
 			})
@@ -385,5 +459,20 @@ function get_covid_all_location(districts) {
 			.catch(function (err) {
 				console.log("Error: ", err);
 			});
+	}
+}
+
+function openNav() {
+	document.getElementById("mySidenav").style.width = "450px";
+}
+
+
+function closeNav() {
+	document.getElementById("mySidenav").style.width = "0";
+}
+
+function removeElements(elements) {
+	for (var i = 0; i < elements.length; i++) {
+		elements[i].parentNode.removeChild(elements[i]);
 	}
 }
