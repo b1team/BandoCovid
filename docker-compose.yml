@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+    backend:
+        image: registry.gitlab.com/falcol/dockertest:latest
+        container_name: covid
+        env_file:
+            - .env
+        command: python api/main.py
+        restart: always
+        ports:
+            - "5000:5000"
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "200M"
+                max-file: "5"
