@@ -1,10 +1,11 @@
-from typing import List
+from typing import Dict, List
 from flask import Flask, jsonify
 
 import requests
 from retry import retry
 
 from flask_cors import CORS, cross_origin
+from bs4 import BeautifulSoup
 
 
 from api.config import ApiConfig
@@ -20,9 +21,7 @@ def get_districts(url: str, city_id: str):
 	response = requests.request("POST", url, data=payload)
 
 	data = response.json()
-	summary = {
-			"summary": data.get("summary")
-	}
+	summary = get_city_summary(ApiConfig.summary_url)
 	districts = []
 	for _, v in data["regionLocations"].items():
 		districts.append({
@@ -30,7 +29,7 @@ def get_districts(url: str, city_id: str):
 			"title": v['title'],
 			"region_type": v['regionType'],
 		})
-	return dict(summary, districts=districts)
+	return dict(summary=summary, districts=districts)
 
 
 def get_district_by_id(district_id: str, keys: List[str], url: str):
@@ -51,6 +50,18 @@ def get_district_by_id(district_id: str, keys: List[str], url: str):
 	return dict(wards=wards_info, summary=summary)
 
 
+def get_city_summary(url: str) -> Dict:
+	res = requests.get(url)
+	soup = BeautifulSoup(res.text, "lxml")
+	row = soup.find("div", {"class": "row"})
+	summary = {}
+	for i in row.find_all("div", {"class": "item-box-covid"}):
+		title = i.find("div", {"class": "title-covid"}).text
+		value = i.find("div", {"class": "val-covid"}).text
+		summary.update({title: value})
+	return summary
+
+
 @app.route("/districts/<district_id>")
 @cross_origin()
 def get_district(district_id):
@@ -67,3 +78,4 @@ def get_districts_handler():
 
 if __name__ == "__main__":
 	app.run(debug=True)
+
