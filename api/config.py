@@ -24,6 +24,7 @@ DEAULT_KEYS = ['lastUpdateTime',
                'updateTime', ]
 
 class ApiConfig:
-	api_url = env.str("API_URL", "")
-	city_id = env.str("CITY_ID", "")
-	district_fields = env.list("DISTRICT_FIELDS", DEAULT_KEYS)
+    api_url = env.str("API_URL", "")
+    summary_url = env.str("SUMMARY_URL", "")
+    city_id = env.str("CITY_ID", "")
+    district_fields = env.list("DISTRICT_FIELDS", DEAULT_KEYS)
