@@ -27,47 +27,60 @@
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <div id="side-menu-wrapped">
             <div id="menu">
-                <table class="table">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th scope="col">Quận</th>
-                            <th scope="col">Ca dương tính</th>
-                            <th scope="col">F1</th>
-                            <th scope="col">F2</th>
-                            <th scope="col">Cách ly tại nhà</th>
-                            <th scope="col">Cách ly tập trung</th>
-                            <th scope="col">Số ca trong ngày</th>
-                            <th scope="col">Hồi phục</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="col">Hà Nội</th>
-                            <th scope="col" id="positiveCaseHN"></th>
-                            <th scope="col" id="f1CaseHN"></th>
-                            <th scope="col" id="f2CaseHN"></th>
-                            <th scope="col" id="isolatedCenter"></th>
-                            <th scope="col" id="isolatedHome"></th>
-                            <th scope="col" id="positivePerDay"></th>
-                            <th scope="col" id="curedCaseHN"></th>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="table">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th scope="col">Quận</th>
-                            <th scope="col">Ca dương tính</th>
-                            <th scope="col">F1</th>
-                            <th scope="col">F2</th>
-                            <th scope="col">Hồi phục</th>
-                            <th scope="col">Tử vong</th>
-                        </tr>
-                    </thead>
-                    <tbody id="content">
+                <div class="menu-city-wrapped">
+                    <div class="menu-city-ins">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h2 style="margin-bottom: 20px;text-align: center;">Thành phố Hà Nội</h2>
+                            </div>
+                            <div class="col-lg-6">
+                                Số ca dương tính:
+                                <div id="positiveCaseHN"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                Số ca F1:
+                                <div id="f1CaseHN"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                Số ca F2:
+                                <div id="f2CaseHN"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                Cách ly tập trung:
+                                <div id="isolatedCenter"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                Cách ly tại nhà:
+                                <div id="isolatedHome"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                Số ca dương tính mỗi ngày:
+                                <div id="positivePerDay"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                Số ca hồi phục:
+                                <div id="curedCaseHN"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ward-mapping" id="ward-mapping" style="display:none;">
+                    <table class="table">
+                        <thead class="thead">
+                            <tr>
+                                <th scope="col">Xã/Phường</th>
+                                <th scope="col">Ca dương tính</th>
+                                <th scope="col">F1</th>
+                                <th scope="col">F2</th>
+                                <th scope="col">Hồi phục</th>
+                                <th scope="col">Tử vong</th>
+                            </tr>
+                        </thead>
+                        <tbody id="content">
 
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

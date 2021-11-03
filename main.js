@@ -349,7 +349,7 @@ function init() {
 							var totalCured = data.summary.totalCured;
 
 							popup.show(evt.coordinate,
-								'<div><ol><li>Quận:' + district + '</li>'
+								'<div><ol><li>Quận/Huyện: ' + district + '</li>'
 								+ '<li>F1: ' + f1 + '</li>'
 								+ '<li>F2: ' + f2 + '</li>'
 								+ '<li>Số ca nhiễm: ' + totalPositive + '</li>'
@@ -360,6 +360,7 @@ function init() {
 								+ '</ol></div>');
 							var wards = data.wards;
 							var ward;
+							document.getElementById("ward-mapping").style.display = "block";
 
 							var ward_form = document.getElementById('content');
 
