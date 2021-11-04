@@ -74,7 +74,7 @@ body{
 
 .sidenav .closebtn {
   position: absolute;
-  top: 0;
+  top: 30px;
   right: 25px;
   font-size: 36px;
   margin-left: 50px;
@@ -96,6 +96,11 @@ body{
   margin-bottom: 5px;
   padding: 20px;
 }
+
+.menu-city-wrapped {
+  margin-top: 20px;
+}
+
 .menu-city-ins, .table{
   padding:20px;
   background-color: white;
@@ -106,4 +111,35 @@ body{
 
 #positiveCaseHN, #f1CaseHN, #f2CaseHN, #isolatedCenter, #isolatedHome, #positivePerDay, #curedCaseHN{
   display: inline-block;
+}
+
+/* Style the header */
+header {
+  background-color: rgb(42, 154, 228);
+  padding: 10px;
+  text-align: center;
+  color: white;
+  position: fixed; 
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  z-index: 2;
+}
+
+/* Style the footer */
+footer {
+  background-color: rgb(42, 154, 228);
+  padding: 10px;
+  text-align: center;
+  color: white;
+  position: fixed; 
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+}
+
+.modal-header {
+  background-color: rgb(42, 154, 228);
 }

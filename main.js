@@ -76,7 +76,7 @@ function init() {
 		controls: ol.control
 			.defaults()
 			.extend([mousePositionControl, scaleLineControl, zoomslider]),
-		layers: [vietnam_geo, quanhuyen, building, hanoi_geo],
+		layers: [vietnam_geo, quanhuyen, hanoi_geo],
 		view: new ol.View({
 			projection: projection4326,
 			center: [105.8138, 21.0],
@@ -248,7 +248,7 @@ function init() {
 				) {
 					for (const data of covid_data) {
 						if (feature.get("ADM2_VI") === data.place) {
-							if (data.totalPositive < 50) {
+							if (data.totalPositive < 20) {
 								feature.setStyle(blue_style);
 								var clone = feature.getStyle().clone();
 								feature.setStyle(clone);
@@ -257,7 +257,7 @@ function init() {
 									.getText()
 									.setText(feature.get("ADM2_VI"));
 							}
-							if (data.totalPositive >= 50 && data.totalPositive <= 100) {
+							if (data.totalPositive >= 20 && data.totalPositive <= 50) {
 								feature.setStyle(yellow_style);
 								var clone = feature.getStyle().clone();
 								feature.setStyle(clone);
@@ -265,7 +265,7 @@ function init() {
 									.getStyle()
 									.getText()
 									.setText(feature.get("ADM2_VI"));
-							} if (data.totalPositive > 100) {
+							} if (data.totalPositive > 50) {
 								feature.setStyle(red_style);
 								var clone = feature.getStyle().clone();
 								feature.setStyle(clone);

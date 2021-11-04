@@ -86,7 +86,68 @@
     </div>
     <span onclick="openNav()" style="position: absolute; top:50px; right:50px;z-index: 1;font-size: 20px;"><i
             class="fas fa-bars"></i></span>
+    <header>
+        <h2>BẢN ĐỒ THÔNG TIN DỊCH TỄ COVID 19 - THÀNH PHỐ HÀ NỘI</h2>
+    </header>
     <div id="map" class="map"></div>
+
+    <footer>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#blueModal">Bình thường</button>
+        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#yellowModal">Nguy cơ</button>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#redModal">Nguy cơ cao</button>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal fade" id="blueModal" tabindex="-1" role="dialog" aria-labelledby="blueModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="blueModalLabel">Thông tin mô tả</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Vùng có dưới 20 ca dương tính
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="yellowModal" tabindex="-1" role="dialog" aria-labelledby="yellowModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="yellowModalLabel">Thông tin mô tả</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Vùng có từ 20 đến 50 ca dương tính
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="redModal" tabindex="-1" role="dialog" aria-labelledby="redModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="redModalLabel">Thông tin mô tả</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Vùng có trên 50 ca dương tính
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- <div id="checkmap" class="checkmap">
         <input type="checkbox" id="chkQuanHuyen" checked style="float:left" /><label for="chkNatural"
             style="float:left; margin-right: 20px">Hà Nội</label>
