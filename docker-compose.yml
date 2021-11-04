@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
     backend:
-        image: registry.gitlab.com/falcol/dockertest:latest
+        build: . # or image api
         container_name: covid
         env_file:
             - .env
