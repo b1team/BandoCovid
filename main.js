@@ -76,7 +76,7 @@ function init() {
 		controls: ol.control
 			.defaults()
 			.extend([mousePositionControl, scaleLineControl, zoomslider]),
-		layers: [vietnam_geo, quanhuyen, building, hanoi_geo],
+		layers: [vietnam_geo, quanhuyen, hanoi_geo],
 		view: new ol.View({
 			projection: projection4326,
 			center: [105.8138, 21.0],
@@ -248,7 +248,7 @@ function init() {
 				) {
 					for (const data of covid_data) {
 						if (feature.get("ADM2_VI") === data.place) {
-							if (data.totalPositive < 50) {
+							if (data.totalPositive < 20) {
 								feature.setStyle(blue_style);
 								var clone = feature.getStyle().clone();
 								feature.setStyle(clone);
@@ -257,7 +257,7 @@ function init() {
 									.getText()
 									.setText(feature.get("ADM2_VI"));
 							}
-							if (data.totalPositive >= 50 && data.totalPositive <= 100) {
+							if (data.totalPositive >= 20 && data.totalPositive <= 50) {
 								feature.setStyle(yellow_style);
 								var clone = feature.getStyle().clone();
 								feature.setStyle(clone);
@@ -265,7 +265,7 @@ function init() {
 									.getStyle()
 									.getText()
 									.setText(feature.get("ADM2_VI"));
-							} if (data.totalPositive > 100) {
+							} if (data.totalPositive > 50) {
 								feature.setStyle(red_style);
 								var clone = feature.getStyle().clone();
 								feature.setStyle(clone);
@@ -349,7 +349,7 @@ function init() {
 							var totalCured = data.summary.totalCured;
 
 							popup.show(evt.coordinate,
-								'<div><ol><li>Quận:' + district + '</li>'
+								'<div><ol><li>Quận/Huyện: ' + district + '</li>'
 								+ '<li>F1: ' + f1 + '</li>'
 								+ '<li>F2: ' + f2 + '</li>'
 								+ '<li>Số ca nhiễm: ' + totalPositive + '</li>'
@@ -360,6 +360,7 @@ function init() {
 								+ '</ol></div>');
 							var wards = data.wards;
 							var ward;
+							document.getElementById("ward-mapping").style.display = "block";
 
 							var ward_form = document.getElementById('content');
 
@@ -424,13 +425,28 @@ function decode_utf8(s) {
 
 // lay thong tin id, ten
 function get_districts() {
-	fetch('http://localhost:8000/districts')
+	fetch('http://103.148.57.200:5000/districts')
 		.then(function (response) {
 			return response.json();
 		})
 		.then((data) => {
 			total_data = data.districts.summary
-			console.log(total_data)
+			console.log(total_data);
+			var positiveCase = total_data['Ca dương tính'];
+			var f1Case = total_data.F1;
+			var f2Case = total_data.F2;
+			var isolatedCenterCase = total_data['Cách ly tập trung'];
+			var isolateedHomeCase = total_data['Cách ly tại nhà']
+			var curedCase = total_data['Đã hồi phục'];
+			var positivePerDay = total_data['Trong ngày'];
+
+			document.getElementById('positiveCaseHN').innerHTML = positiveCase;
+			document.getElementById('f1CaseHN').innerHTML = f1Case;
+			document.getElementById('f2CaseHN').innerHTML = f2Case;
+			document.getElementById('isolatedHome').innerHTML = isolateedHomeCase;
+			document.getElementById('isolatedCenter').innerHTML = isolatedCenterCase;
+			document.getElementById('positivePerDay').innerHTML = positivePerDay;
+			document.getElementById('curedCaseHN').innerHTML = curedCase;
 			get_covid_all_location(data.districts);
 			init();
 		})
@@ -442,7 +458,7 @@ function get_districts() {
 //lay thong tin covid tat ca cac quan
 function get_covid_all_location(districts) {
 	for (let district of districts.districts) {
-		fetch(`http://localhost:8000/districts/${district.id}`)
+		fetch(`http://103.148.57.200:5000/districts/${district.id}`)
 			.then(function (response) {
 				return response.json();
 			})
@@ -463,7 +479,7 @@ function get_covid_all_location(districts) {
 }
 
 function openNav() {
-	document.getElementById("mySidenav").style.width = "450px";
+	document.getElementById("mySidenav").style.width = "520px";
 }
 
 

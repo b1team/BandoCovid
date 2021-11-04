@@ -27,37 +27,127 @@
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <div id="side-menu-wrapped">
             <div id="menu">
-                <!-- <div class="container">
-                    <div class="row" id="content">
-                        <div class="col-lg-2">Tên quận</div>
-                        <div class="col-lg-2">Ca dương tính</div>
-                        <div class="col-lg-2">F1</div>
-                        <div class="col-lg-2">F2</div>
-                        <div class="col-lg-2">Ca hồi phục</div>
-                        <div class="col-lg-2">Tử vong</div>
+                <div class="menu-city-wrapped">
+                    <div class="menu-city-ins">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h2 style="margin-bottom: 20px;text-align: center;">Thành phố Hà Nội</h2>
+                            </div>
+                            <div class="col-lg-6">
+                                Số ca dương tính:
+                                <div id="positiveCaseHN"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                Số ca F1:
+                                <div id="f1CaseHN"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                Số ca F2:
+                                <div id="f2CaseHN"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                Cách ly tập trung:
+                                <div id="isolatedCenter"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                Cách ly tại nhà:
+                                <div id="isolatedHome"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                Số ca dương tính mỗi ngày:
+                                <div id="positivePerDay"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                Số ca hồi phục:
+                                <div id="curedCaseHN"></div>
+                            </div>
+                        </div>
                     </div>
-                </div> -->
-                <table class="table">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th scope="col">Quận</th>
-                            <th scope="col">Ca dương tính</th>
-                            <th scope="col">F1</th>
-                            <th scope="col">F2</th>
-                            <th scope="col">Hồi phục</th>
-                            <th scope="col">Tử vong</th>
-                        </tr>
-                    </thead>
-                    <tbody id="content">
+                </div>
+                <div class="ward-mapping" id="ward-mapping" style="display:none;">
+                    <table class="table">
+                        <thead class="thead">
+                            <tr>
+                                <th scope="col">Xã/Phường</th>
+                                <th scope="col">Ca dương tính</th>
+                                <th scope="col">F1</th>
+                                <th scope="col">F2</th>
+                                <th scope="col">Hồi phục</th>
+                                <th scope="col">Tử vong</th>
+                            </tr>
+                        </thead>
+                        <tbody id="content">
 
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
     <span onclick="openNav()" style="position: absolute; top:50px; right:50px;z-index: 1;font-size: 20px;"><i
             class="fas fa-bars"></i></span>
+    <header>
+        <h2>BẢN ĐỒ THÔNG TIN DỊCH TỄ COVID 19 - THÀNH PHỐ HÀ NỘI</h2>
+    </header>
     <div id="map" class="map"></div>
+
+    <footer>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#blueModal">Bình thường</button>
+        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#yellowModal">Nguy cơ</button>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#redModal">Nguy cơ cao</button>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal fade" id="blueModal" tabindex="-1" role="dialog" aria-labelledby="blueModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="blueModalLabel">Thông tin mô tả</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Vùng có dưới 20 ca dương tính
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="yellowModal" tabindex="-1" role="dialog" aria-labelledby="yellowModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="yellowModalLabel">Thông tin mô tả</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Vùng có từ 20 đến 50 ca dương tính
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="redModal" tabindex="-1" role="dialog" aria-labelledby="redModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="redModalLabel">Thông tin mô tả</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Vùng có trên 50 ca dương tính
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- <div id="checkmap" class="checkmap">
         <input type="checkbox" id="chkQuanHuyen" checked style="float:left" /><label for="chkNatural"
             style="float:left; margin-right: 20px">Hà Nội</label>
