@@ -6,6 +6,7 @@ let covid_data = [];
 let total_data = {};
 
 function init() {
+	// Điều chỉnh tầm nhìn lúc đầu, số chuẩn mới hiện ra chính xác
 	var extent4326 = [
 		-124.91178131103516, -16.53435516357422, 110.1765365600586,
 		67.11203002929688,
@@ -17,6 +18,7 @@ function init() {
 		units: "m",
 	});
 
+	// Gọi ra layer ở trong geoserver
 	var quanhuyen = new ol.layer.Image({
 		extent: extent4326,
 		source: new ol.source.ImageWMS({
@@ -41,6 +43,7 @@ function init() {
 		}),
 	});
 
+	//Gọi layer dạng geojson
 	var hanoi_geo = new ol.layer.Vector({
 		title: "added Layer",
 		source: new ol.source.Vector({
@@ -61,13 +64,14 @@ function init() {
 		}),
 	});
 
+	//Vị trí của chuột
 	var mousePositionControl = new ol.control.MousePosition({
 		coordinateFormat: ol.coordinate.createStringXY(4),
 		undefinedHTML: "&nbsp;",
 	});
 
 	var scaleLineControl = new ol.control.ScaleLine();
-
+	// Thanh zoom
 	var zoomslider = new ol.control.ZoomSlider();
 
 	//Hien thi ban do
@@ -86,6 +90,7 @@ function init() {
 	});
 
 	// Hover chuột
+	// style default của map
 	const style = new ol.style.Style({
 		fill: new ol.style.Fill({
 			color: "rgba(255, 255, 255, 0.8)",
@@ -106,6 +111,7 @@ function init() {
 		}),
 	});
 
+	// style khi hover chuột vào
 	const highlightStyle = new ol.style.Style({
 		stroke: new ol.style.Stroke({
 			color: "#f00",
@@ -128,6 +134,7 @@ function init() {
 
 	let highlight;
 
+	// Khi hover vào màu sẽ sáng hơn
 	const displayFeatureInfo = function (pixel) {
 		const feature = map.forEachFeatureAtPixel(pixel, function (feature) {
 			return feature;
@@ -151,6 +158,7 @@ function init() {
 		}
 	};
 
+	//set style sáng màu khi hover
 	const featureOverlay = new ol.layer.Vector({
 		source: new ol.source.Vector(),
 		map: map,
@@ -160,6 +168,7 @@ function init() {
 		},
 	});
 
+	// Sự kiện bắt pixel để hover
 	map.on("pointermove", function (evt) {
 		if (evt.dragging) {
 			return;
@@ -168,7 +177,8 @@ function init() {
 		displayFeatureInfo(pixel);
 	});
 
-	// Fill mau theo so ca nhiem
+	// Fill màu theo số ca nhiễm
+	// Lấy độ rộng của map, console để biết
 	var extent = map.getView().calculateExtent(map.getSize());
 
 	const blue_style = new ol.style.Style({
@@ -231,11 +241,15 @@ function init() {
 		}),
 	});
 
+	// Phân chia màu sắc theo ca nhiễm
 	let stop = 0;
 	map.on("rendercomplete", function () {
+		// Gọi các quận huyện - features
 		var features = hanoi_geo.getSource().getFeatures();
 		if (stop === 1) return;
+		// console.log(extent)
 
+		// KHi api call xong thì sẽ bắt đầu fill màu
 		if (covid_data.length === 30) {
 			console.log(covid_data);
 			for (var i in features) {
@@ -247,7 +261,9 @@ function init() {
 					)
 				) {
 					for (const data of covid_data) {
+						// So sánh địa điểm theo tên
 						if (feature.get("ADM2_VI") === data.place) {
+							//So sánh số ca nhiễm để fill màu
 							if (data.totalPositive < 20) {
 								feature.setStyle(blue_style);
 								var clone = feature.getStyle().clone();
@@ -282,36 +298,34 @@ function init() {
 		}
 	});
 
-	map.on("click", function (evt) {
-		displayFeatureInfo(evt.pixel);
-	});
 
-	// Bật/tắt layer
-	$("#chkBuilding").change(function () {
-		if ($("#chkBuilding").is(":checked")) {
-			building.setVisible(true);
-		} else {
-			building.setVisible(false);
-		}
-	});
 
-	$("#chkQuanHuyen").change(function () {
-		if ($("#chkQuanHuyen").is(":checked")) {
-			quanhuyen.setVisible(true);
-			hanoi_geo.setVisible(true);
-		} else {
-			quanhuyen.setVisible(false);
-			hanoi_geo.setVisible(false);
-		}
-	});
+	// Bật/tắt layer - ko dùng nhưng để cho biết cách bật tắt
+	// $("#chkBuilding").change(function () {
+	// 	if ($("#chkBuilding").is(":checked")) {
+	// 		building.setVisible(true);
+	// 	} else {
+	// 		building.setVisible(false);
+	// 	}
+	// });
 
-	$("#chkvietnam").change(function () {
-		if ($("#chkvietnam").is(":checked")) {
-			vietnam_geo.setVisible(true);
-		} else {
-			vietnam_geo.setVisible(false);
-		}
-	});
+	// $("#chkQuanHuyen").change(function () {
+	// 	if ($("#chkQuanHuyen").is(":checked")) {
+	// 		quanhuyen.setVisible(true);
+	// 		hanoi_geo.setVisible(true);
+	// 	} else {
+	// 		quanhuyen.setVisible(false);
+	// 		hanoi_geo.setVisible(false);
+	// 	}
+	// });
+
+	// $("#chkvietnam").change(function () {
+	// 	if ($("#chkvietnam").is(":checked")) {
+	// 		vietnam_geo.setVisible(true);
+	// 	} else {
+	// 		vietnam_geo.setVisible(false);
+	// 	}
+	// });
 
 	// Click hiện thông tin layer
 	const container = document.getElementById('popup');
@@ -320,6 +334,7 @@ function init() {
 	var popup = new Popup();
 	map.addOverlay(popup);
 	map.on("singleclick", function (evt) {
+		// Lấy thông tin của quận đã click
 		var view = map.getView();
 		var viewResolution = view.getResolution();
 		var url = quanhuyen
@@ -328,6 +343,7 @@ function init() {
 				INFO_FORMAT: "application/json",
 			});
 
+		// Khi click vào chuẩn layer thì sẽ có url và call url để lấy thông tin
 		if (url) {
 			fetch(url)
 				.then(function (response) {
@@ -335,7 +351,8 @@ function init() {
 				})
 				.then((data) => {
 					if (data.features.length === 0) return;
-					var place = data.features[0].properties.adm2_vi;
+					var place = data.features[0].properties.adm2_vi; // Lấy tên quận
+					// Chạy vòng for so sánh để lấy thông tin hiện lên popup và bảng bên phải
 					for (const data of covid_data) {
 						if (place === data.place) {
 							console.log(data);
@@ -423,7 +440,7 @@ function decode_utf8(s) {
 	return decodeURIComponent(escape(s));
 }
 
-// lay thong tin id, ten
+// call api
 function get_districts() {
 	fetch('http://103.148.57.200:5000/districts')
 		.then(function (response) {
@@ -463,7 +480,6 @@ function get_covid_all_location(districts) {
 				return response.json();
 			})
 			.then((data) => {
-				//muon lay thong tin gi sua summany, wards
 				result = {
 					place: district.title,
 					totalPositive: data.summary.totalPositive,
